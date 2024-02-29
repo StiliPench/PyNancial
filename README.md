@@ -1,2 +1,2 @@
 Simple stock analyzer.
-Uses Flink for backend and React for frontend
+Uses Flask for backend and React for frontend
