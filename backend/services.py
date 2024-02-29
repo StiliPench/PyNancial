@@ -1,7 +1,7 @@
 import yfinance as yf
-import pandas as pd
 import csv
 
+# Metrics that are being used for the calculations
 metrics = ['trailingPE', 'forwardPE', 'priceToBook', 'debtToEquity', 'dividendYield', 'freeCashflow']
 # Metrics for which lower is better
 invert_list = set(['trailingPE', 'forwardPE', 'priceToBook', 'debtToEquity'])
@@ -53,12 +53,14 @@ def get_min_max_values(stock_data):
     
     return min_max_values
 
+# Normailzes a data point using min and max value for the whole set
 def normalize_value(value, min_value, max_value, invert=False):
     if max_value - min_value == 0:
         return 1 if invert else 0
     normalized = (value - min_value) / (max_value - min_value)
     return 1 - normalized if invert else normalized
 
+# Calculation of the undervalue index of the stock with the chosen metrics above
 def calculate_undervalue_index(stock, min_max_values):
     undervalue_index = 0
     for metric, weight in weights.items():
@@ -66,6 +68,7 @@ def calculate_undervalue_index(stock, min_max_values):
         min_value, max_value = min_max_values[metric]['min'], min_max_values[metric]['max']
         metric_value = stock.get(metric)
 
+        # Make sure the value is int or float, otherwise skip
         if isinstance(metric_value, float) or isinstance(metric_value, int):
             invert = metric in invert_list
             normalized_value = normalize_value(metric_value, min_value, max_value, invert=invert)
